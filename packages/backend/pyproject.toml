@@ -1,0 +1,17 @@
+[project]
+name = "reddit-like-forum-backend"
+version = "0.1.0"
+description = "Backend for Reddit-like forum"
+dependencies = [
+    "fastapi==0.95.2",
+    "uvicorn==0.21.1",
+    "pydantic==1.10.13",
+    "python-dotenv==1.0.0",
+    "httpx==0.23.3",
+    "supabase==0.7.1",
+    "python-jose[cryptography]==3.3.0"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build" 
