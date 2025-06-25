@@ -1,4 +1,5 @@
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+//Initializes an Axios instance for making HTTP requests to your backend REST API
+import axios, { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
 const api = axios.create({
   baseURL: 'http://localhost:8000',
@@ -8,7 +9,7 @@ const api = axios.create({
 });
 
 // Add request interceptor to include auth token
-api.interceptors.request.use((config: AxiosRequestConfig) => {
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem('token');
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -28,5 +29,16 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+interface CreatePostData {
+  title: string;
+  content: string;
+  author_id: string;
+}
+
+export const createPost = async (data: CreatePostData) => {
+  const response = await api.post('/api/posts', data);
+  return response.data;
+};
 
 export default api; 

@@ -1,20 +1,55 @@
-from fastapi import Depends, HTTPException, Header
-from typing import Optional
+"""Authentication middleware for Supabase."""
+from fastapi import Request, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
-from ..config.settings import settings
+import os
 
-async def get_current_user(authorization: Optional[str] = Header(None)) -> str:
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+class SupabaseJWTBearer(HTTPBearer):
+    """JWT Bearer authentication for Supabase."""
     
-    try:
-        # Remove 'Bearer ' prefix
-        token = authorization.replace("Bearer ", "")
-        # Verify the token with Clerk's public key
-        payload = jwt.decode(token, settings.clerk_secret_key, algorithms=["HS256"])
-        user_id = payload.get("sub")
-        if not user_id:
-            raise HTTPException(status_code=401, detail="Invalid authentication token")
-        return user_id
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid authentication token") 
+    def __init__(self, auto_error: bool = True):
+        super(SupabaseJWTBearer, self).__init__(auto_error=auto_error)
+        self.jwt_secret = os.environ.get("SUPABASE_JWT_SECRET")
+
+    async def __call__(self, request: Request):
+        credentials: HTTPAuthorizationCredentials = await super(SupabaseJWTBearer, self).__call__(request)
+        
+        if not credentials:
+            raise HTTPException(status_code=401, detail="Invalid authorization code.")
+        
+        if not credentials.scheme == "Bearer":
+            raise HTTPException(status_code=401, detail="Invalid authentication scheme.")
+            
+        if not self.verify_jwt(credentials.credentials):
+            raise HTTPException(status_code=401, detail="Invalid token or expired token.")
+            
+        return credentials.credentials
+
+    def verify_jwt(self, token: str) -> bool:
+        """Verify JWT token."""
+        try:
+            # Decode and verify the token
+            payload = jwt.decode(
+                token,
+                self.jwt_secret,
+                algorithms=["HS256"],
+                audience="authenticated"
+            )
+            return True
+        except JWTError:
+            return False
+
+    def get_user_id(self, token: str) -> str:
+        """Get user ID from JWT token."""
+        try:
+            payload = jwt.decode(
+                token,
+                self.jwt_secret,
+                algorithms=["HS256"],
+                audience="authenticated"
+            )
+            return payload.get("sub")  # Supabase stores user ID in 'sub' claim
+        except JWTError:
+            return None
+
+auth_scheme = SupabaseJWTBearer() 

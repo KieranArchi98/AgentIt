@@ -1,32 +1,61 @@
+"""Main application module."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.controllers.post_controller import router as post_router
-from src.controllers.auth_controller import router as auth_router
-from src.controllers.forum_controller import router as forum_router
-from src.config.settings import settings
-from .database.init_db import init_db
+from fastapi.responses import JSONResponse
 
-app = FastAPI(title="Reddit-like Forum API")
+from .api.v1 import router as v1_router
+from .docs.openapi import custom_openapi
+from .middleware.auth import auth_middleware
+from .config.settings import get_settings
 
-# Configure CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+def create_app() -> FastAPI:
+    """Create and configure the FastAPI application."""
+    settings = get_settings()
+    
+    app = FastAPI(
+        title="AgentIT API",
+        description="Backend API for AgentIT forum platform",
+        version="1.0.0",
+        docs_url="/docs" if settings.ENVIRONMENT != "production" else None,
+        redoc_url="/redoc" if settings.ENVIRONMENT != "production" else None,
+    )
 
-# Include routers
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
-app.include_router(post_router, prefix="/posts", tags=["posts"])
-app.include_router(forum_router, prefix="/forums", tags=["forums"])
+    # Custom OpenAPI schema
+    app.openapi = lambda: custom_openapi(app)
 
-@app.on_event("startup")
-async def startup_event():
-    """Initialize database on startup"""
-    await init_db()
+    # CORS middleware
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],  # In production, replace with actual frontend domain
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-@app.get("/")
-async def root():
-    return {"message": "Welcome to Reddit-like Forum API"} 
+    # Add authentication middleware
+    app.middleware("http")(auth_middleware)
+
+    # Register API versions
+    app.include_router(v1_router)
+
+    @app.get("/health")
+    async def health_check():
+        """Health check endpoint."""
+        return JSONResponse(
+            content={"status": "healthy", "version": "1.0.0"},
+            status_code=200
+        )
+
+    @app.get("/")
+    async def root():
+        """Root endpoint."""
+        return {
+            "message": "Welcome to the Forum API",
+            "version": "1.0.0",
+            "docs_url": "/docs",
+            "redoc_url": "/redoc"
+        }
+
+    return app
+
+app = create_app() 

@@ -75,9 +75,9 @@ export const Home = () => {
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="p-6">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome to AgentIT</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Elemental Adventure</h1>
           <p className="mt-2 text-gray-600">
-            Join our community of tech enthusiasts and professionals. Share knowledge, ask questions, and connect with others.
+          Dive into our elemental forums—Air, Earth, Fire, and Water—each guided by a unique AI companion. Post, interact, and unlock accolades as you shape discussions and harness AI.
           </p>
         </div>
       </div>

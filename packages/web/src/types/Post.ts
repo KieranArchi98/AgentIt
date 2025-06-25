@@ -1,3 +1,5 @@
+//Typescript interfaces for objects
+
 export interface Profile {
   id: string;
   username: string;
@@ -30,17 +32,14 @@ export interface Post {
   id: string;
   title: string;
   content: string;
-  user_id: string;
-  forum_id: string;
   created_at: string;
   updated_at: string;
-  votes: number;
-  author?: {
-    username: string;
+  author: {
+    id: string;
+    email: string;
+    name: string | null;
     avatar_url: string | null;
   };
-  profile?: Profile;
-  comments?: Comment[];
-  commentCount?: number;
-  voteCount?: number;
+  likes: number;
+  comments_count: number;
 } 

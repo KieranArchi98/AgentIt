@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Home, MessageSquare, Users, Clock, Star, Settings, Wind, Flame, Waves, Mountain } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getForums } from '@/utils/apiClient';
+import { Button } from './ui/button';
 
 interface Forum {
   id: string;
@@ -12,6 +13,8 @@ interface Forum {
 
 interface SidebarProps {
   className?: string;
+  isSignedIn?: boolean;
+  onCloseSidebar?: () => void;
 }
 
 // Add this CSS to your styles
@@ -40,7 +43,7 @@ const getElementalStyle = (forumName: string) => {
   return '';
 };
 
-export const Sidebar = ({ className = '' }: SidebarProps) => {
+export const Sidebar = ({ className = '', isSignedIn, onCloseSidebar }: SidebarProps) => {
   const [forums, setForums] = useState<Forum[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -72,6 +75,12 @@ export const Sidebar = ({ className = '' }: SidebarProps) => {
     { icon: Settings, label: 'Settings', to: '/settings' },
   ];
 
+  const handleLinkClick = () => {
+    if (onCloseSidebar) {
+      onCloseSidebar();
+    }
+  };
+
   return (
     <aside className={`bg-white p-4 rounded-lg shadow ${className}`}>
       <div className="space-y-6">
@@ -84,6 +93,7 @@ export const Sidebar = ({ className = '' }: SidebarProps) => {
               <Link
                 key={link.to}
                 to={link.to}
+                onClick={handleLinkClick}
                 className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-50 hover:text-gray-900"
               >
                 <link.icon className="mr-3 h-5 w-5" />
@@ -112,6 +122,7 @@ export const Sidebar = ({ className = '' }: SidebarProps) => {
                   <Link
                     key={forum.id}
                     to={`/forum/${forum.id}`}
+                    onClick={handleLinkClick}
                     className="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-50 hover:text-gray-900"
                   >
                     <span className="flex items-center">
@@ -130,6 +141,24 @@ export const Sidebar = ({ className = '' }: SidebarProps) => {
               })
             )}
           </div>
+        </div>
+
+        {/* Mobile Auth Buttons */}
+        <div className="block sm:hidden">
+          {!isSignedIn && (
+            <div className="space-y-2 pt-4 border-t">
+              <Link to="/auth/login" className="w-full" onClick={handleLinkClick}>
+                <Button variant="outline" className="w-full">
+                  Sign In
+                </Button>
+              </Link>
+              <Link to="/auth/signup" className="w-full" onClick={handleLinkClick}>
+                <Button className="w-full">
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </aside>

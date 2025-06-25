@@ -1,15 +1,20 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { Layout } from '@/components/Layout';
-import { Home } from '@/pages/Home';
-import { ForumPage } from '@/pages/ForumPage';
-import { DiscussionPage } from '@/pages/DiscussionPage';
-import { MembersPage } from '@/pages/MembersPage';
-import { SettingsPage } from '@/pages/SettingsPage';
-import { ProfilePage } from '@/pages/ProfilePage';
-import { NotFoundPage } from '@/pages/NotFoundPage';
-import { CreatePostPage } from '@/pages/CreatePostPage';
-import { ForumListPage } from '@/pages/ForumListPage';
-import { PostPage } from '@/pages/PostPage';
+import { Layout } from './components/Layout';
+import { LoginPage } from './pages/LoginPage';
+import { SignUpPage } from './pages/SignUpPage';
+import { Home } from './pages/Home';
+import { ForumPage } from './pages/ForumPage';
+import { DiscussionPage } from './pages/DiscussionPage';
+import { CreatePostPage } from './pages/CreatePostPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { SettingsPage } from './pages/SettingsPage';
+import { AuthLayout } from './components/AuthLayout';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { MembersPage } from './pages/MembersPage';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { ForumsPage } from './pages/ForumsPage';
+import { PopularPage } from './pages/PopularPage';
+import { AuthCallbackPage } from './pages/AuthCallbackPage';
 
 export const router = createBrowserRouter([
   {
@@ -22,40 +27,72 @@ export const router = createBrowserRouter([
       },
       {
         path: 'forums',
-        element: <ForumListPage />,
+        element: <ForumsPage />,
+      },
+      {
+        path: 'popular',
+        element: <PopularPage />,
       },
       {
         path: 'forum/:forumId',
         element: <ForumPage />,
       },
       {
-        path: 'forum/:forumId/new-post',
-        element: <CreatePostPage />,
-      },
-      {
-        path: 'post/:postId',
-        element: <PostPage />,
-      },
-      {
-        path: 'discussion/:id',
+        path: 'discussion/:discussionId',
         element: <DiscussionPage />,
+      },
+      {
+        path: 'create-post',
+        element: (
+          <ProtectedRoute>
+            <CreatePostPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'profile/:username',
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'settings',
+        element: (
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'members',
         element: <MembersPage />,
       },
       {
-        path: 'settings',
-        element: <SettingsPage />,
-      },
-      {
-        path: 'profile/:username',
-        element: <ProfilePage />,
+        path: 'auth/callback',
+        element: <AuthCallbackPage />,
       },
       {
         path: '*',
         element: <NotFoundPage />,
       },
     ],
+  },
+  {
+    path: '/sign-in/*',
+    element: (
+      <AuthLayout>
+        <LoginPage />
+      </AuthLayout>
+    ),
+  },
+  {
+    path: '/sign-up/*',
+    element: (
+      <AuthLayout>
+        <SignUpPage />
+      </AuthLayout>
+    ),
   },
 ]); 

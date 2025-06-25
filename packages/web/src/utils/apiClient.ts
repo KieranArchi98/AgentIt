@@ -1,3 +1,4 @@
+//Client side utility using supabase js sdk
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;

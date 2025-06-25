@@ -22,15 +22,15 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] = ["http://localhost:5173"]
     
     # Vite environment variables
-    VITE_SUPABASE_URL: str | None = None
-    VITE_SUPABASE_ANON_KEY: str | None = None
-    VITE_CLERK_PUBLISHABLE_KEY: str | None = None
-    VITE_API_URL: str | None = None
-    VITE_POSTHOG_KEY: str | None = None
+    VITE_SUPABASE_URL: str | None = "https://exqrejzynhrsebvenckq.supabase.co"
+    VITE_SUPABASE_ANON_KEY: str | None = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4cXJlanp5bmhyc2VidmVuY2txIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAwMjQxNzksImV4cCI6MjA2NTYwMDE3OX0.2_TITFyiQdfkYo7nbZoCobTBYWqA4623i2KrUnolzsE"
+    VITE_CLERK_PUBLISHABLE_KEY: str | None = "pk_test_cnVsaW5nLWNyYXlmaXNoLTEwLmNsZXJrLmFjY291bnRzLmRldiQ"
+    VITE_API_URL: str | None = "http://localhost:8000"
+    VITE_POSTHOG_KEY: str | None = "phc_3xrJA0ypg8TjJXDUhNK3iZl51LXKbXU8ObaU01cneH2"
     
     # Supabase settings
-    SUPABASE_URL: str = ""  # This should be set from environment variable
-    SUPABASE_KEY: str = ""  # This should be set from environment variable
+    SUPABASE_URL: str = "https://exqrejzynhrsebvenckq.supabase.co"  # This should be set from environment variable
+    SUPABASE_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4cXJlanp5bmhyc2VidmVuY2txIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAwMjQxNzksImV4cCI6MjA2NTYwMDE3OX0.2_TITFyiQdfkYo7nbZoCobTBYWqA4623i2KrUnolzsE"  # This should be set from environment variable
     
     # Clerk settings (optional)
     CLERK_PUBLISHABLE_KEY: str | None = None
